@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import com.revrobotics.CANSparkMax;
 
@@ -25,8 +24,6 @@ public class DriveTrain extends SubsystemBase {
   private DifferentialDrive drive;
   private Encoder leftencoder; 
   private Encoder rightencoder;
-  private AnalogGyro gyro;
-  private AnalogInput rangefind;
 
 
   public DriveTrain() {
