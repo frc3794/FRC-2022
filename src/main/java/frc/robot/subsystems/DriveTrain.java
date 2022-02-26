@@ -24,6 +24,7 @@ public class DriveTrain extends SubsystemBase {
   private DifferentialDrive drive;
   private Encoder leftencoder; 
   private Encoder rightencoder;
+  private Encoder horencoder;
 
 
   public DriveTrain() {
@@ -38,8 +39,9 @@ public class DriveTrain extends SubsystemBase {
 
     drive = new DifferentialDrive(leftMotors, rightMotors);
 
-    leftencoder = new Encoder (0, 1);
-    rightencoder = new Encoder (2, 3);
+    leftencoder = new Encoder ();
+    rightencoder = new Encoder ();
+    horencoder = new Encoder ();
 
   }
 
