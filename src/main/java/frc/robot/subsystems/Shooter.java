@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 public class Shooter extends PIDSubsystem {
-  private final PWMSparkMax m_shooterMotor = new PWMSparkMax(ShooterConstants.kShooterMotorPort);
+  private final PWMSparkMax m_shooterMotor1 = new PWMSparkMax(ShooterConstants.kShooterMotor1Port);
+  private final PWMSparkMax m_shooterMotor2 = new PWMSparkMax(ShooterConstants.kShooterMotor2Port);
   private final PWMSparkMax m_feederMotor = new PWMSparkMax(ShooterConstants.kFeederMotorPort);
   private final Encoder m_shooterEncoder =
       new Encoder(
@@ -31,7 +32,8 @@ public class Shooter extends PIDSubsystem {
   @Override
   public void useOutput(double output, double setpoint) {
 
-    m_shooterMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
+    m_shooterMotor1.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
+    m_shooterMotor2.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
   }
 
   @Override
