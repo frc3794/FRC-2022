@@ -3,14 +3,16 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.examples.frisbeebot.Constants.ShooterConstants;
+//import edu.wpi.first.wpilibj.examples.frisbeebot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+
 
 public class Shooter extends PIDSubsystem {
   private final PWMSparkMax m_shooterMotor1 = new PWMSparkMax(ShooterConstants.kShooterMotor1Port);
   private final PWMSparkMax m_shooterMotor2 = new PWMSparkMax(ShooterConstants.kShooterMotor2Port);
-  private final PWMSparkMax m_feederMotor = new PWMSparkMax(ShooterConstants.kFeederMotorPort);
+  private final PWMTalonSRX m_feederMotor = new PWMTalonSRX(ShooterConstants.kFeederMotorPort);
   private final Encoder m_shooterEncoder =
       new Encoder(
           ShooterConstants.kEncoderPorts[0],
@@ -53,3 +55,19 @@ public class Shooter extends PIDSubsystem {
     m_feederMotor.set(0);
   }
 }
+
+/*
+PWMTalonSRX
+2.004ms = full "forward"
+1.520ms = the "high end" of the deadband range
+1.500ms = center of the deadband range (off)
+1.480ms = the "low end" of the deadband range
+0.997ms = full "reverse"
+
+PWMSparkMax
+2.003ms = full "forward"
+1.550ms = the "high end" of the deadband range
+1.500ms = center of the deadband range (off)
+1.460ms = the "low end" of the deadband range
+0.999ms = full "reverse"
+*/
