@@ -13,34 +13,59 @@ public class Shooter extends PIDSubsystem {
   private final PWMSparkMax m_shooterMotor1 = new PWMSparkMax(ShooterConstants.kShooterMotor1Port);
   private final PWMSparkMax m_shooterMotor2 = new PWMSparkMax(ShooterConstants.kShooterMotor2Port);
   private final PWMTalonSRX m_feederMotor = new PWMTalonSRX(ShooterConstants.kFeederMotorPort);
-  private final Encoder m_shooterEncoder =
+  
+  private final Encoder m_shooter1Encoder =
       new Encoder(
           ShooterConstants.kEncoderPorts[0],
           ShooterConstants.kEncoderPorts[1],
           ShooterConstants.kEncoderReversed);
-  private final SimpleMotorFeedforward m_shooterFeedforward =
+
+  private final Encoder m_shooter2Encoder =
+    new Encoder(
+        ShooterConstants.kEncoderPorts[0],
+        ShooterConstants.kEncoderPorts[1],
+        ShooterConstants.kEncoderReversed);
+
+  private final Encoder m_feederEncoder =
+  new Encoder(
+      ShooterConstants.kEncoderPorts[0],
+      ShooterConstants.kEncoderPorts[1],
+      ShooterConstants.kEncoderReversed);
+
+  private final SimpleMotorFeedforward m_shooter1Feedforward =
       new SimpleMotorFeedforward(
           ShooterConstants.kSVolts, ShooterConstants.kVVoltSecondsPerRotation);
+
+  private final SimpleMotorFeedforward m_shooter2Feedforward =
+  new SimpleMotorFeedforward(
+      ShooterConstants.kSVolts, ShooterConstants.kVVoltSecondsPerRotation);
+
+  private final SimpleMotorFeedforward m_feederFeedforward =
+  new SimpleMotorFeedforward(
+      ShooterConstants.kSVolts, ShooterConstants.kVVoltSecondsPerRotation);
 
   /** The shooter subsystem for the robot. */
   public Shooter() {
     super(new PIDController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD));
     getController().setTolerance(ShooterConstants.kShooterToleranceRPS);
-    m_shooterEncoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
-    setSetpoint(ShooterConstants.kShooterTargetRPS);
+    m_shooter1Encoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
+    m_shooter2Encoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
+    m_feederEncoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
+    setSetpoint(/**ShooterConstants.kShooterTargetRPS*/);
   }
 
 
   @Override
   public void useOutput(double output, double setpoint) {
 
-    m_shooterMotor1.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
-    m_shooterMotor2.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
+    m_shooterMotor1.setVoltage(output + m_shooter1Feedforward.calculate(setpoint));
+    m_shooterMotor2.setVoltage(output + m_shooter2Feedforward.calculate(setpoint));
   }
 
   @Override
   public double getMeasurement() {
-    return m_shooterEncoder.getRate();
+    return m_shooter1Encoder.getRate();
+    return m_shooter2Encoder.getRate();
   }
 
   public boolean atSetpoint() {
