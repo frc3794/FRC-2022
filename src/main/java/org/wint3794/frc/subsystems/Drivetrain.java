@@ -47,8 +47,10 @@ public class Drivetrain extends SubsystemBase {
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(
       m_frontRight, m_rearRight);
 
-  private final Encoder m_leftEncoder = new Encoder(0, 1);
-  private final Encoder m_rightEncoder = new Encoder(2, 3);
+  private final Encoder m_leftEncoder = new Encoder(DrivetrainConstants.kEncoderPorts[0][0],
+      DrivetrainConstants.kEncoderPorts[0][1]);
+  private final Encoder m_rightEncoder = new Encoder(DrivetrainConstants.kEncoderPorts[1][0],
+      DrivetrainConstants.kEncoderPorts[1][1]);
 
   private final EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
   private final EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
@@ -74,8 +76,6 @@ public class Drivetrain extends SubsystemBase {
       DrivetrainConstants.kTrackWidth);
 
   public Drivetrain() {
-    // m_rearLeft.follow(m_frontLeft);
-    // m_rearRight.follow(m_frontRight);
     m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
     m_leftEncoder

@@ -34,7 +34,7 @@ public final class Constants {
 
         public static final int[] kMotorPorts = { 0, 1, 2, 3 }; // FL, RL, FR, RR
 
-        public static final int[][] kEncoderPorts = { { 0, 1 }, { 2, 3 }, { 4, 5 } };
+        public static final int[][] kEncoderPorts = { { 0, 1 }, { 2, 3 } };
     }
 
     public static class ShooterConstants {
