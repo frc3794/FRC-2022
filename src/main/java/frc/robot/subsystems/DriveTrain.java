@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.AnalogInput;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class DriveTrain extends SubsystemBase {
    
@@ -29,20 +30,19 @@ public class DriveTrain extends SubsystemBase {
 
   public DriveTrain() {
 
-    frontleft = new CANSparkMax(0);
-    backleft = new CANSparkMax(1);
-    leftMotors = new MotorControllerGroup(frontleft, backleft);
+    var frontleft = new CANSparkMax(0, MotorType.kBrushless);
+    var backleft = new CANSparkMax(1, MotorType.kBrushless);
+    var leftMotors = new MotorControllerGroup(frontleft, backleft);
 
-    frontright = new CANSparkMax(2);
-    backright = new CANSparkMax(3);
-    rightMotors = new MotorControllerGroup(frontright, backright);
+    var frontright = new CANSparkMax(2, MotorType.kBrushless);
+    var backright = new CANSparkMax(3, MotorType.kBrushless);
+    var rightMotors = new MotorControllerGroup(frontright, backright);
 
-    drive = new DifferentialDrive(leftMotors, rightMotors);
+    var drive = new DifferentialDrive(leftMotors, rightMotors);
 
-    leftencoder = new Encoder (0);
-    rightencoder = new Encoder (1);
-    horencoder = new Encoder (2);
-
+    var leftencoder = new Encoder (0, 1);
+    var rightencoder = new Encoder (1, 2);
+    var horencoder = new Encoder (2, 3);
   }
 
   @Override
