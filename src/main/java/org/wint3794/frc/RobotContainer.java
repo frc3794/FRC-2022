@@ -5,12 +5,15 @@
 package org.wint3794.frc;
 
 import org.wint3794.frc.Constants.DrivetrainConstants;
-import org.wint3794.frc.commands.BackwardCommand;
 import org.wint3794.frc.commands.ForwardCommand;
 import org.wint3794.frc.subsystems.Drivetrain;
+import org.wint3794.frc.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -23,12 +26,21 @@ public class RobotContainer {
   private final XboxController m_driveController = new XboxController(0);
   private final XboxController m_subsystemController = new XboxController(1);
 
+  private final Shooter m_shooter = new Shooter();
+
   public RobotContainer() {
     configureButtonBindings();
   }
 
   private void configureButtonBindings() {
+    new JoystickButton(m_subsystemController, Button.kA.value)
+      .whenPressed(new InstantCommand(m_shooter::enable, m_shooter));
 
+    new JoystickButton(m_subsystemController, Button.kB.value)
+      .whenPressed(new InstantCommand(m_shooter::disable, m_shooter));
+
+    new JoystickButton(m_subsystemController, Button.kX.value)
+      .whileHeld(new StartEndCommand(m_shooter::runFeeder, m_shooter::stopFeeder, m_shooter));
   }
 
   public Command getAutonomousCommand() {
