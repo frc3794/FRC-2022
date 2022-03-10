@@ -34,7 +34,7 @@ public final class Constants {
 
         public static final double kSensibilityPercent = 0.8;
 
-        public static final int[] kMotorPorts = { 0, 1, 2, 3 }; // FL, RL, FR, RR
+        public static final int[] kMotorPorts = { 1, 4, 2, 3 }; // FL, RL, FR, RR
 
         public static final int[][] kEncoderPorts = { { 0, 1 }, { 2, 3 } };
     }

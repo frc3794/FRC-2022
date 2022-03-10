@@ -9,6 +9,8 @@ import org.wint3794.frc.commands.ForwardCommand;
 import org.wint3794.frc.subsystems.Drivetrain;
 import org.wint3794.frc.subsystems.Shooter;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +28,9 @@ public class RobotContainer {
   private final XboxController m_driveController = new XboxController(0);
   private final XboxController m_subsystemController = new XboxController(1);
 
+  //tmp
+  private final Solenoid colgada = new Solenoid(PneumaticsModuleType.CTREPCM, 6);
+
   private final Shooter m_shooter = new Shooter();
 
   public RobotContainer() {
@@ -41,6 +46,10 @@ public class RobotContainer {
 
     new JoystickButton(m_subsystemController, Button.kX.value)
       .whileHeld(new StartEndCommand(m_shooter::runFeeder, m_shooter::stopFeeder, m_shooter));
+
+    new JoystickButton(m_subsystemController, Button.kY.value)
+      .whenPressed(new StartEndCommand(
+        () -> colgada.set(true), () -> colgada.set(false) ));
   }
 
   public Command getAutonomousCommand() {
