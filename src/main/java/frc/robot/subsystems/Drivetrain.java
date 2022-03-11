@@ -2,12 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package org.wint3794.frc.subsystems;
+package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
-import org.wint3794.frc.Constants.DrivetrainConstants;
+import frc.robot.Constants.DrivetrainConstants;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -76,6 +76,7 @@ public class Drivetrain extends SubsystemBase {
       DrivetrainConstants.kTrackWidth);
 
   public Drivetrain() {
+    m_leftMotors.setInverted(true);
     m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
     m_leftEncoder

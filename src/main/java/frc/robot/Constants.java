@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package org.wint3794.frc;
+package frc.robot;
 
 import edu.wpi.first.math.util.Units;
 
@@ -44,8 +44,8 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
 
-        public static final int kShooterMotorPort = 4;
-        public static final int kFeederMotorPort = 5;
+        public static final int[] kShooterMotorPort = { 5, 6 };
+        public static final int kFeederMotorPort = 10;
 
         public static final int[] kEncoderPorts = { 6, 7 }; // Only Shooter Ports
         public static final boolean kEncoderReversed = false;

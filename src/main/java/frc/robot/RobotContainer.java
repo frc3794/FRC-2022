@@ -2,12 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package org.wint3794.frc;
+package frc.robot;
 
-import org.wint3794.frc.Constants.DrivetrainConstants;
-import org.wint3794.frc.commands.ForwardCommand;
-import org.wint3794.frc.subsystems.Drivetrain;
-import org.wint3794.frc.subsystems.Shooter;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.commands.ForwardCommand;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
 
@@ -83,7 +82,7 @@ public class RobotContainer {
     }
 
     fwd *= DrivetrainConstants.kSensibilityPercent;
-    rot *= DrivetrainConstants.kSensibilityPercent * 0.8;
+    rot *= DrivetrainConstants.kSensibilityPercent * -0.8;
 
     m_drivetrain.arcadeDrive(fwd, rot);
   }
