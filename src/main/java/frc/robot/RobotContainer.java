@@ -5,10 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PneumaticsConstants;
 import frc.robot.commands.ForwardCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,28 +29,34 @@ public class RobotContainer {
   private final XboxController m_driveController = new XboxController(0);
   private final XboxController m_subsystemController = new XboxController(1);
 
-  //tmp
-  private final Solenoid colgada = new Solenoid(PneumaticsModuleType.CTREPCM, 6);
+  private final Intake m_intake = new Intake();
+
+  private final Compressor m_pcmCompressor = new Compressor(
+      PneumaticsConstants.pcmPort,
+      PneumaticsModuleType.CTREPCM);
 
   private final Shooter m_shooter = new Shooter();
 
   public RobotContainer() {
+
+    m_pcmCompressor.enableDigital();
+
     configureButtonBindings();
   }
 
   private void configureButtonBindings() {
     new JoystickButton(m_subsystemController, Button.kA.value)
-      .whenPressed(new InstantCommand(m_shooter::enable, m_shooter));
-
-    new JoystickButton(m_subsystemController, Button.kB.value)
-      .whenPressed(new InstantCommand(m_shooter::disable, m_shooter));
-
-    new JoystickButton(m_subsystemController, Button.kX.value)
-      .whileHeld(new StartEndCommand(m_shooter::runFeeder, m_shooter::stopFeeder, m_shooter));
+        .whenPressed(new InstantCommand(m_intake::toggle, m_intake));
 
     new JoystickButton(m_subsystemController, Button.kY.value)
-      .whenPressed(new StartEndCommand(
-        () -> colgada.set(true), () -> colgada.set(false) ));
+        .whenPressed(new InstantCommand(m_shooter::enable, m_shooter));
+
+    new JoystickButton(m_subsystemController, Button.kB.value)
+        .whenPressed(new InstantCommand(m_shooter::disable, m_shooter));
+
+    new JoystickButton(m_subsystemController, Button.kX.value)
+        .whileHeld(new StartEndCommand(m_shooter::runFeeder, m_shooter::stopFeeder,
+            m_shooter));
   }
 
   public Command getAutonomousCommand() {

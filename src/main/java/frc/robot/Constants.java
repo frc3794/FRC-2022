@@ -59,4 +59,10 @@ public final class Constants {
         public static final double kShooterToleranceRPS = 0;
     }
 
+    public static class PneumaticsConstants {
+        public static final int pcmPort = 16;
+
+        public static final int intakeCylinderLeft = 5;
+        public static final int intakeCylinderRight = 7;
+    }
 }
