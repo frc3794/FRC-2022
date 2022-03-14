@@ -4,58 +4,37 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Constants.ShooterConstants;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+public class Shooter extends SubsystemBase {
 
-public class Shooter extends PIDSubsystem {
+  private final CANSparkMax m_shooterMotor = new CANSparkMax(ShooterConstants.kShooterMotorPort, MotorType.kBrushed);
 
-  private final CANSparkMax m_shooterMotor = new CANSparkMax(ShooterConstants.kShooterMotorPort[0], MotorType.kBrushless);
-  private final CANSparkMax m_shooterMotorFollower = new CANSparkMax(ShooterConstants.kShooterMotorPort[1], MotorType.kBrushless);
-
-  //private final CANSparkMax m_feederMotor = new CANSparkMax(ShooterConstants.kFeederMotorPort, MotorType.kBrushless);
-
-  private final Encoder m_shooterEncoder = new Encoder(
-      ShooterConstants.kEncoderPorts[0],
-      ShooterConstants.kEncoderPorts[1],
-      ShooterConstants.kEncoderReversed);
-
-  private final SimpleMotorFeedforward m_shooterFeedforward = new SimpleMotorFeedforward(
-      ShooterConstants.kSVolts, ShooterConstants.kVVoltSecondsPerRotation);
+  private final TalonSRX m_feederMotor = new TalonSRX(ShooterConstants.kFeederMotorPort);
 
   public Shooter() {
-    super(new PIDController(ShooterConstants.kP, ShooterConstants.kI, ShooterConstants.kD));
-    m_shooterMotorFollower.follow(m_shooterMotor);
-    getController().setTolerance(ShooterConstants.kShooterToleranceRPS);
-    m_shooterEncoder.setDistancePerPulse(ShooterConstants.kEncoderDistancePerPulse);
-    setSetpoint(ShooterConstants.kShooterTargetRPS);
-  }
-
-  @Override
-  public void useOutput(double output, double setpoint) {
-    m_shooterMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
-  }
-
-  @Override
-  public double getMeasurement() {
-    return m_shooterEncoder.getRate();
-  }
-
-  public boolean atSetpoint() {
-    return m_controller.atSetpoint();
+    m_shooterMotor.setInverted(true);
   }
 
   public void runFeeder() {
-    //m_feederMotor.set(ShooterConstants.kFeederSpeed);
+    m_feederMotor.set(TalonSRXControlMode.PercentOutput, ShooterConstants.kFeederSpeed);
   }
 
   public void stopFeeder() {
-    //m_feederMotor.set(0);
+    m_feederMotor.set(TalonSRXControlMode.PercentOutput, 0);
+  }
+
+  public void run() {
+    m_shooterMotor.set(0.9);
+  }
+
+  public void stop() {
+    m_shooterMotor.set(0);
   }
 }
