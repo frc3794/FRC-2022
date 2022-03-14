@@ -8,7 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import frc.robot.Constants.DrivetrainConstants;
-
+import frc.robot.commands.MoveDrivetrain;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
@@ -83,6 +84,8 @@ public class Drivetrain extends SubsystemBase {
         .setDistancePerPulse(2 * Math.PI * DrivetrainConstants.kWheelRadius / DrivetrainConstants.kEncoderResolution);
     m_rightEncoder
         .setDistancePerPulse(2 * Math.PI * DrivetrainConstants.kWheelRadius / DrivetrainConstants.kEncoderResolution);
+
+    this.setDefaultCommand(new MoveDrivetrain(this));
 
     SmartDashboard.putData("Field", m_field);
   }
@@ -161,5 +164,9 @@ public class Drivetrain extends SubsystemBase {
 
   public double getTurnRate() {
     return -m_gyro.getRate();
+  }
+
+  public void stop(){
+    this.m_drive.arcadeDrive(0, 0);
   }
 }
