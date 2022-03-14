@@ -3,6 +3,8 @@ The Rapid React (FRC 2022) Code
 
 WinT-3794's code for the FIRST Robotics Competition 2022 (Rapid React). Written in Java and is based off WPILib's Java control system.
 
+[![Robot CI](https://github.com/WinT-3794/FRC-2022/actions/workflows/main.yml/badge.svg)](https://github.com/WinT-3794/FRC-2022/actions/workflows/main.yml)
+
 ## Setup Instructions
 
 ### General
