@@ -32,7 +32,7 @@ public final class Constants {
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
 
-        public static final double kSensibilityPercent = 0.8;
+        public static final double kSensibilityPercent = 0.85;
 
         public static final int[] kMotorPorts = { 1, 4, 2, 3 }; // FL, RL, FR, RR
 
@@ -44,7 +44,7 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
 
-        public static final int[] kShooterMotorPort = { 5, 6 };
+        public static final int kShooterMotorPort = 6;
         public static final int kFeederMotorPort = 10;
 
         public static final int[] kEncoderPorts = { 6, 7 }; // Only Shooter Ports
@@ -54,15 +54,32 @@ public final class Constants {
 
         public static final double kSVolts = 0;
         public static final double kVVoltSecondsPerRotation = 0;
-        public static final double kShooterTargetRPS = 0;
-        public static final double kEncoderDistancePerPulse = 0;
-        public static final double kShooterToleranceRPS = 0;
+        public static final double kShooterTargetRPS = 70;
+        public static final double kEncoderDistancePerPulse = 10;
+        public static final double kShooterToleranceRPS = 10;
+    }
+
+    public static class IntakeConstants {
+        public static final int kCylinderLeft = 2;
+        public static final int kCylinderRight = 3;
+
+        public static final int kMotor = 9;
+    }
+
+    public static class IndexerConstants {
+        public static final int kLeftMotor = 8;
+        public static final int kRightMotor = 12;
     }
 
     public static class PneumaticsConstants {
-        public static final int pcmPort = 16;
+        public static final int kPCMPort = 16;
+    }
 
-        public static final int intakeCylinderLeft = 5;
-        public static final int intakeCylinderRight = 7;
+    public static class ClimberConstants {
+        public static final int kLeftMotor = 15;
+        public static final int kRightMotor = 14;
+
+        public static final int kLeftCylinder = 6;
+        public static final int kRightCylinder = 7;
     }
 }
