@@ -4,49 +4,38 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PneumaticsConstants;
 
 public class Intake extends SubsystemBase {
 
-  private final Solenoid m_cylinderLeft = new Solenoid(PneumaticsModuleType.CTREPCM,
-      PneumaticsConstants.intakeCylinderLeft);
+  private final Solenoid m_cylinderLeft = new Solenoid(PneumaticsConstants.kPCMPort, PneumaticsModuleType.CTREPCM,
+      IntakeConstants.kCylinderLeft);
 
-  private final Solenoid m_cylinderRight = new Solenoid(PneumaticsModuleType.CTREPCM,
-      PneumaticsConstants.intakeCylinderRight);
+  private final Solenoid m_cylinderRight = new Solenoid(PneumaticsConstants.kPCMPort, PneumaticsModuleType.CTREPCM,
+      IntakeConstants.kCylinderRight);
 
-  private boolean isOpen = false;
+  private final TalonSRX m_getter = new TalonSRX(IntakeConstants.kMotor);
 
-  /** Creates a new Intake. */
   public Intake() {
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+    m_getter.setInverted(true);
   }
 
   public void open() {
     m_cylinderLeft.set(true);
     m_cylinderRight.set(true);
-    this.isOpen = true;
+    m_getter.set(ControlMode.PercentOutput, 0.7);
   }
 
   public void close() {
     m_cylinderLeft.set(false);
     m_cylinderRight.set(false);
-    this.isOpen = false;
-  }
-
-  public void toggle() {
-    if (this.isOpen) {
-      close();
-    } else {
-      open();
-    }
-
-    this.isOpen = !this.isOpen;
+    m_getter.set(ControlMode.PercentOutput, 0);
   }
 }
