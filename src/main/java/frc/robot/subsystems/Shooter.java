@@ -10,16 +10,20 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Constants.ShooterConstants;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-  private final CANSparkMax m_shooterMotor = new CANSparkMax(ShooterConstants.kShooterMotorPort, MotorType.kBrushed);
+  private final CANSparkMax m_shooterMotor1 = new CANSparkMax(ShooterConstants.kShooterMotorPorts[0], MotorType.kBrushless);
+  private final CANSparkMax m_shooterMotor2 = new CANSparkMax(ShooterConstants.kShooterMotorPorts[1], MotorType.kBrushless);
+
+  private final MotorControllerGroup m_shooterMotors = new MotorControllerGroup(m_shooterMotor1, m_shooterMotor2);
 
   private final TalonSRX m_feederMotor = new TalonSRX(ShooterConstants.kFeederMotorPort);
 
   public Shooter() {
-    m_shooterMotor.setInverted(true);
+    m_shooterMotor1.setInverted(true);
   }
 
   public void runFeeder() {
@@ -31,10 +35,10 @@ public class Shooter extends SubsystemBase {
   }
 
   public void run() {
-    m_shooterMotor.set(0.9);
+    m_shooterMotors.set(0.9);
   }
 
   public void stop() {
-    m_shooterMotor.set(0);
+    m_shooterMotors.set(0);
   }
 }

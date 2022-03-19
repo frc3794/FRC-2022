@@ -44,7 +44,7 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
 
-        public static final int kShooterMotorPort = 6;
+        public static final int[] kShooterMotorPorts = { 5, 6};
         public static final int kFeederMotorPort = 10;
 
         public static final int[] kEncoderPorts = { 6, 7 }; // Only Shooter Ports
