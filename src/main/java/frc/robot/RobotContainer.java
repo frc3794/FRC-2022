@@ -51,7 +51,10 @@ public class RobotContainer {
         .whileHeld(new FeedCargo(m_intake));
 
     new JoystickButton(m_subsystemController, Button.kB.value)
-        .toggleWhenPressed(new ShootCargo(m_shooter));
+        .toggleWhenPressed(new ShootCargo(m_shooter, 5000));
+
+    new JoystickButton(m_subsystemController, Button.kY.value)
+        .toggleWhenPressed(new ShootCargo(m_shooter, 2000));
 
     new JoystickButton(m_subsystemController, Button.kX.value)
         .whileHeld(new TransportCargo(m_indexer));

@@ -6,16 +6,18 @@ import frc.robot.subsystems.Shooter;
 public class ShootCargo extends CommandBase {
 
   private final Shooter m_shooter;
+  private double setPoint = 0;
 
-  public ShootCargo(Shooter shooter) {
+  public ShootCargo(Shooter shooter, double setPoint) {
     this.m_shooter = shooter;
     addRequirements(this.m_shooter);
+    this.setPoint = setPoint;
   }
 
   @Override
-  public void initialize() {
+  public void execute() {
     m_shooter.runFeeder();
-    m_shooter.run();
+    m_shooter.run(this.setPoint);
   }
 
   @Override
