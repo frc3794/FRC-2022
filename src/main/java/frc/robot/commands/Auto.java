@@ -32,11 +32,11 @@ public class Auto extends CommandBase {
     do {
       this.m_drivetrain.arcadeDrive(-0.6, 0);
     } while (timer.get() < 2);
-
-    this.m_drivetrain.stop();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.m_drivetrain.stop();
+  }
 }
