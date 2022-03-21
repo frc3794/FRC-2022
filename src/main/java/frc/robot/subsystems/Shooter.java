@@ -22,8 +22,8 @@ public class Shooter extends SubsystemBase {
   private RelativeEncoder m_encoder_2;
 
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
-  private final CANSparkMax m_shooterMotor_1 = new CANSparkMax(ShooterConstants.kShooterMotorPort_1, MotorType.kBrushless);
-  private final CANSparkMax m_shooterMotor_2 = new CANSparkMax(ShooterConstants.kShooterMotorPort_2, MotorType.kBrushless);
+  private final CANSparkMax m_shooterMotor_1 = new CANSparkMax(ShooterConstants.kShooterMotorPorts[0], MotorType.kBrushless);
+  private final CANSparkMax m_shooterMotor_2 = new CANSparkMax(ShooterConstants.kShooterMotorPorts[1], MotorType.kBrushless);
 
   private final TalonSRX m_feederMotor = new TalonSRX(ShooterConstants.kFeederMotorPort);
 

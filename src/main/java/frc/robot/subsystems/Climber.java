@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +20,12 @@ public class Climber extends SubsystemBase {
 
   private final VictorSPX m_leftMotor = new VictorSPX(ClimberConstants.kLeftMotor);
   private final VictorSPX m_rightMotor = new VictorSPX(ClimberConstants.kRightMotor);
+
+  private final DigitalInput m_leftUpperLimit = new DigitalInput(ClimberConstants.kLeftUpperLimit);
+  private final DigitalInput m_leftLowerLimit = new DigitalInput(ClimberConstants.kLeftLowerLimit);
+
+  private final DigitalInput m_rightUpperLimit = new DigitalInput(ClimberConstants.kRightUpperLimit);
+  private final DigitalInput m_rightLowerLimit = new DigitalInput(ClimberConstants.kRightLowerLimit);
 
   private final Solenoid m_leftCylinder = new Solenoid(PneumaticsConstants.kPCMPort, PneumaticsModuleType.CTREPCM,
       ClimberConstants.kLeftCylinder);
@@ -34,19 +40,35 @@ public class Climber extends SubsystemBase {
   }
 
   public void extendLeftArm() {
-    m_leftMotor.set(ControlMode.PercentOutput, -1);
-  }
-
-  public void extendRightArm() {
-    m_rightMotor.set(ControlMode.PercentOutput, 1);
+    if (this.m_leftUpperLimit.get()) {
+      m_leftMotor.set(ControlMode.PercentOutput, 0.4);
+    } else {
+      this.stopLeftArm();
+    }
   }
 
   public void contractLeftArm() {
-    m_leftMotor.set(ControlMode.PercentOutput, 0.4);
+    if (this.m_leftLowerLimit.get()) {
+      m_leftMotor.set(ControlMode.PercentOutput, -1);
+    } else {
+      this.stopLeftArm();
+    }
+  }
+
+  public void extendRightArm() {
+    if (this.m_rightUpperLimit.get()) {
+      m_rightMotor.set(ControlMode.PercentOutput, -0.4);
+    } else {
+      this.stopRightArm();
+    }
   }
 
   public void contractRightArm() {
-    m_rightMotor.set(ControlMode.PercentOutput, -0.4);
+    if (this.m_rightLowerLimit.get()) {
+      m_rightMotor.set(ControlMode.PercentOutput, 1);
+    } else {
+      this.stopRightArm();
+    }
   }
 
   public void stopLeftArm() {

@@ -28,17 +28,17 @@ public class Climb extends CommandBase {
   @Override
   public void execute() {
     if (m_controller.getLeftY() > 0.2) {
-      m_climber.extendLeftArm();
-    } else if (m_controller.getLeftY() < -0.2) {
       m_climber.contractLeftArm();
+    } else if (m_controller.getLeftY() < -0.2) {
+      m_climber.extendLeftArm();
     } else {
       m_climber.stopLeftArm();
     }
 
     if (m_controller.getRightY() > 0.2) {
-      m_climber.extendRightArm();
-    } else if (m_controller.getRightY() < -0.2) {
       m_climber.contractRightArm();
+    } else if (m_controller.getRightY() < -0.2) {
+      m_climber.extendRightArm();
     } else {
       m_climber.stopRightArm();
     }
