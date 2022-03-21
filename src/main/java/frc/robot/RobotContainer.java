@@ -16,17 +16,17 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
 
-  private final XboxController m_subsystemController = new XboxController(1);
+  private final XboxController m_subsystemController = Robot.getSubsystemController();
 
   private final Intake m_intake = new Intake();
 
@@ -42,6 +42,14 @@ public class RobotContainer {
 
   private final Climber m_climber = new Climber();
 
+  private final Command superSimpleAuto = superSimpleAutonomous();
+
+  private final Command simpleAuto = null;
+
+  private final Command complexAuto = null;
+
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+
   public RobotContainer() {
     m_pcmCompressor.enableDigital();
 
@@ -56,10 +64,15 @@ public class RobotContainer {
 
     new JoystickButton(m_subsystemController, Button.kX.value)
         .whileHeld(new TransportCargo(m_indexer));
+
+    m_chooser.setDefaultOption ("Super Simple Autonomous", superSimpleAuto);
+    m_chooser.addOption ("Simple Autonomous", simpleAuto);
+    m_chooser.addOption ("Complex Autonomous", complexAuto);
+
+    SmartDashboard.putData(":", m_chooser);
   }
 
-  public Command getAutonomousCommand() {
-
+  public Command superSimpleAutonomous () {
     ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
     TransportCargo transportCargo = new TransportCargo(m_indexer);
     Auto auto = new Auto(m_drivetrain);
@@ -69,4 +82,9 @@ public class RobotContainer {
             new WaitCommand(3).andThen(transportCargo))
         .andThen(auto.withTimeout(2));
   }
+
+  public Command getAutonomousCommand() {
+    return m_chooser.getSelected();
+  }
+
 }

@@ -41,7 +41,7 @@ public class Climber extends SubsystemBase {
 
   public void extendLeftArm() {
     if (this.m_leftUpperLimit.get()) {
-      m_leftMotor.set(ControlMode.PercentOutput, 0.4);
+      m_leftMotor.set(ControlMode.PercentOutput, 0.6);
     } else {
       this.stopLeftArm();
     }
@@ -57,7 +57,7 @@ public class Climber extends SubsystemBase {
 
   public void extendRightArm() {
     if (this.m_rightUpperLimit.get()) {
-      m_rightMotor.set(ControlMode.PercentOutput, -0.4);
+      m_rightMotor.set(ControlMode.PercentOutput, -0.6);
     } else {
       this.stopRightArm();
     }
