@@ -28,11 +28,18 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
-        public static final double kP = 0.05;
-        public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kP = 0.000055;
+        public static final double kI = 0.00000058;
+        public static final double kD = 0.00000048;
+        public static final double kIz = 0;
+        public static final double kFF = 0.000015;
+        public static final double kMaxOutput = 1;
+        public static final double kMinOutput = 0;
+        public static final double kMaxRPM = 5500;
 
         public static final int[] kShooterMotorPorts = { 5, 6 };
+        public static final boolean[] kShooterMotorsInverted = { true, false };
+
         public static final int kFeederMotorPort = 10;
 
         public static final int[] kEncoderPorts = { 6, 7 }; // Only Shooter Ports

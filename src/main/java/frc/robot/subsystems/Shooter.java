@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 import frc.robot.Constants.ShooterConstants;
@@ -16,52 +15,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
 
-  private SparkMaxPIDController m_pidController;
-  private RelativeEncoder m_encoder;
-  private SparkMaxPIDController m_pidController_2;
-  private RelativeEncoder m_encoder_2;
+  private final CANSparkMax m_shooterMotor_1 = new CANSparkMax(
+      ShooterConstants.kShooterMotorPorts[0], MotorType.kBrushless);
 
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
-  private final CANSparkMax m_shooterMotor_1 = new CANSparkMax(ShooterConstants.kShooterMotorPorts[0], MotorType.kBrushless);
-  private final CANSparkMax m_shooterMotor_2 = new CANSparkMax(ShooterConstants.kShooterMotorPorts[1], MotorType.kBrushless);
+  private final CANSparkMax m_shooterMotor_2 = new CANSparkMax(
+      ShooterConstants.kShooterMotorPorts[1], MotorType.kBrushless);
 
   private final TalonSRX m_feederMotor = new TalonSRX(ShooterConstants.kFeederMotorPort);
 
   public Shooter() {
-    m_shooterMotor_1.setInverted(true);
-    m_shooterMotor_2.setInverted(false);
-    
-    m_pidController = m_shooterMotor_1.getPIDController();
-    m_encoder = m_shooterMotor_1.getEncoder();
+    m_shooterMotor_1.setInverted(ShooterConstants.kShooterMotorsInverted[0]);
+    m_shooterMotor_2.setInverted(ShooterConstants.kShooterMotorsInverted[1]);
 
-    m_pidController_2 = m_shooterMotor_2.getPIDController();
-    m_encoder_2 = m_shooterMotor_2.getEncoder();
-
-    // PID coefficients
-    kP = 0.000055; 
-    kI = 0.00000058;
-    kD = 0.00000048; 
-    kIz = 0; 
-    kFF = 0.000015; 
-    kMaxOutput = 1; 
-    kMinOutput = 0;
-    maxRPM = 5500;
-
-    // set PID coefficients
-    m_pidController.setP(kP);
-    m_pidController.setI(kI);
-    m_pidController.setD(kD);
-    m_pidController.setIZone(kIz);
-    m_pidController.setFF(kFF);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
-
-    m_pidController_2.setP(kP);
-    m_pidController_2.setI(kI);
-    m_pidController_2.setD(kD);
-    m_pidController_2.setIZone(kIz);
-    m_pidController_2.setFF(kFF);
-    m_pidController_2.setOutputRange(kMinOutput, kMaxOutput);
-    }
+    configurePIDController(m_shooterMotor_1.getPIDController());
+    configurePIDController(m_shooterMotor_2.getPIDController());
+  }
 
   public void runFeeder() {
     m_feederMotor.set(TalonSRXControlMode.PercentOutput, ShooterConstants.kFeederSpeed);
@@ -72,12 +40,21 @@ public class Shooter extends SubsystemBase {
   }
 
   public void run(double setPoint) {
-    m_pidController.setReference(setPoint, CANSparkMax.ControlType.kVelocity);
-    m_pidController_2.setReference(setPoint, CANSparkMax.ControlType.kVelocity);
+    m_shooterMotor_1.getPIDController().setReference(setPoint, CANSparkMax.ControlType.kVelocity);
+    m_shooterMotor_2.getPIDController().setReference(setPoint, CANSparkMax.ControlType.kVelocity);
   }
 
   public void stop() {
     m_shooterMotor_1.set(0);
     m_shooterMotor_2.set(0);
+  }
+
+  private void configurePIDController(SparkMaxPIDController pidController) {
+    pidController.setP(ShooterConstants.kP);
+    pidController.setI(ShooterConstants.kI);
+    pidController.setD(ShooterConstants.kD);
+    pidController.setIZone(ShooterConstants.kIz);
+    pidController.setFF(ShooterConstants.kFF);
+    pidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
   }
 }
