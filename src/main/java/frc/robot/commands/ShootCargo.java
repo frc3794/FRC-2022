@@ -18,11 +18,13 @@ public class ShootCargo extends CommandBase {
   public void initialize() {
     m_shooter.runFeeder();
     m_shooter.run(this.setPoint);
+    m_shooter.colorLeds(1);
   }
 
   @Override
   public void end(boolean interrupted) {
     m_shooter.stopFeeder();
     m_shooter.stop();
+    m_shooter.colorLeds(0);
   }
 }

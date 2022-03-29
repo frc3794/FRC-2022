@@ -25,6 +25,10 @@ public final class Constants {
         public static final int[] kMotorPorts = { 1, 4, 2, 3 }; // FL, RL, FR, RR
 
         public static final int[][] kEncoderPorts = { { 0, 1 }, { 2, 3 } };
+
+        public static final float kP = 2.5F;
+        public static final float kI = 1.9F;
+        public static final float kD = 0.0F;
     }
 
     public static class ShooterConstants {
@@ -82,5 +86,11 @@ public final class Constants {
 
         public static final int kRightUpperLimit = 1;
         public static final int kRightLowerLimit = 3;
+    }
+
+    public static class PIDAutoConstants {
+        public static final double kP = 0.01;
+        public static final double kI = 0.01;
+        public static final double kD = 0.01;
     }
 }

@@ -4,16 +4,20 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.MoveDrivetrain;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
@@ -24,6 +28,10 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSiz
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.RelativeEncoder;
+import java.lang.Math;
+import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PIDAutoConstants;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -40,8 +48,20 @@ public class Drivetrain extends SubsystemBase {
   private MotorControllerGroup m_leftMotors = new MotorControllerGroup(
       m_frontLeft, m_rearLeft);
 
+  private RelativeEncoder m_leftEncoder;
+  private RelativeEncoder m_rightEncoder;
+
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(
       m_frontRight, m_rearRight);
+
+  private final PIDController pid = new PIDController(PIDAutoConstants.kP, PIDAutoConstants.kI, PIDAutoConstants.kD);
+  private final PIDController lpid = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI, DrivetrainConstants.kD);
+
+  AHRS gyro = new AHRS(SPI.Port.kMXP);
+
+  private boolean firstTime = true;
+  private float currentAngle = 0.00F;
+  private float toAngle = 0.00F;
 
   /*private final Encoder m_leftEncoder = new Encoder(DrivetrainConstants.kEncoderPorts[0][0],
       DrivetrainConstants.kEncoderPorts[0][1]);
@@ -119,28 +139,94 @@ public class Drivetrain extends SubsystemBase {
     m_drive.arcadeDrive(fwd, rot);
   }
 
+  private double getEncoderDistance (double side) {
+    if (side == 0) {
+      m_leftEncoder = m_frontLeft.getEncoder();
+      return (.1524*Math.PI) * (m_leftEncoder.getPosition() / 10.71);
+    } else if (side == 1) {
+      m_rightEncoder = m_frontRight.getEncoder();
+      return (.1524*Math.PI) * (m_rightEncoder.getPosition() / 10.71);
+    } else {
+      return 0;
+    }
+  }
+
+  public void moveToDistance (double setPoint) {
+    /*double previousEncoderLeft = getEncoderDistance(0);
+    double previousEncoderRight = getEncoderDistance(1);
+    double kP = 2.5;
+    double kI = 1.9;
+    double errorLeft = 100000;
+    double errorRight = 100000;
+    double previousErrorLeft = 0;
+    double previousErrorRight = 0;
+    double errorLeftSum = 0;
+    double errorRightSum = 0;
+
+    while (Math.abs(errorLeft) > 0.03 && Math.abs(errorRight) > 0.03) {
+
+      if (Math.abs((errorLeft+errorRight) / 2) < 0.5) {
+        errorLeft = setpoint + getEncoderDistance(0) - previousEncoderLeft;
+        errorRight = setpoint - getEncoderDistance(1) + previousEncoderRight;
+        errorLeftSum = errorLeft + previousErrorLeft;
+        errorRightSum = errorLeft + previousErrorRight;
+        tankDriveVolts(errorLeft * kP + errorLeftSum * kI,
+        errorRight * kP + errorRightSum * kI);
+        previousErrorLeft = errorLeft;
+        previousErrorRight = errorRight;
+      } else {
+        errorLeft = setpoint + getEncoderDistance(0) - previousEncoderLeft;
+        errorRight = setpoint - getEncoderDistance(1) + previousEncoderRight;
+        tankDriveVolts(errorLeft * kP, errorRight * kP);
+      }
+
+    }*/
+
+    double lSpeed = lpid.calculate(getEncoderDistance(0), setPoint);
+    //double rSpeed = lpid.calculate(getEncoderDistance(1), setPoint);
+
+    m_leftMotors.set(lSpeed);
+    m_rightMotors.set(lSpeed);
+
+  }
+
+  public void rotateToAngle (int addAngle) {
+    if (firstTime) {
+      currentAngle = gyro.getPitch();
+      firstTime = false;
+    }
+    float angle = gyro.getPitch();
+
+    if (currentAngle + addAngle > 180) {
+      toAngle = -180 + ((currentAngle + toAngle) - 180);
+    } else if (currentAngle + addAngle < -180) {
+      toAngle = 180 - Math.abs((currentAngle + addAngle) + 180);
+    } else {
+      toAngle = currentAngle + addAngle;
+    }
+
+    double speed = pid.calculate(angle, toAngle);
+    m_rightMotors.set(speed);
+    m_leftMotors.set(speed * -1);
+  }
+
+  public boolean rightAngle (int addAngle) {
+    if (!firstTime) {
+      if (gyro.getPitch() == currentAngle + addAngle) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
     m_drive.feed();
   }
-
-  /*public void resetEncoders() {
-    m_leftEncoder.reset();
-    m_rightEncoder.reset();
-  }*/
-
-  /*public double getAverageEncoderDistance() {
-    return (m_leftEncoder.getDistance() + m_rightEncoder.getDistance()) / 2.0;
-  }
-
-  public Encoder getLeftEncoder() {
-    return m_leftEncoder;
-  }
-
-  public Encoder getRightEncoder() {
-    return m_rightEncoder;
-  }*/
 
   public void setMaxOutput(double maxOutput) {
     m_drive.setMaxOutput(maxOutput);

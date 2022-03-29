@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.PneumaticsConstants;
@@ -33,42 +34,76 @@ public class Climber extends SubsystemBase {
   private final Solenoid m_rightCylinder = new Solenoid(PneumaticsConstants.kPCMPort, PneumaticsModuleType.CTREPCM,
       ClimberConstants.kRightCylinder);
 
+  private boolean previousSensor = false;
+  private boolean firstTime = true;
+  private boolean uCanGoDown = false;
+
+  
+
   public Climber() {
     setDefaultCommand(new Climb(this));
     m_leftMotor.setNeutralMode(NeutralMode.Brake);
     m_rightMotor.setNeutralMode(NeutralMode.Brake);
   }
 
-  public void extendLeftArm() {
+  public boolean extendLeftArm() {
     if (this.m_leftUpperLimit.get()) {
-      m_leftMotor.set(ControlMode.PercentOutput, 0.6);
+      m_leftMotor.set(ControlMode.PercentOutput, 1);
+      return false;
     } else {
       this.stopLeftArm();
+      return true;
     }
-  }
+  }  
 
-  public void contractLeftArm() {
+  public boolean contractLeftArm() {
     if (this.m_leftLowerLimit.get()) {
       m_leftMotor.set(ControlMode.PercentOutput, -1);
+      return false;
     } else {
       this.stopLeftArm();
+      return true;
     }
   }
 
-  public void extendRightArm() {
+  public void extendRightArmSlow() {
+    m_rightMotor.set(ControlMode.PercentOutput, -0.2);
+  } 
+
+  public void extendLeftArmSlow() {
+    m_leftMotor.set(ControlMode.PercentOutput, 0.2);
+  }  
+
+  public boolean extendRightArm() {
     if (this.m_rightUpperLimit.get()) {
-      m_rightMotor.set(ControlMode.PercentOutput, -0.6);
+      m_rightMotor.set(ControlMode.PercentOutput, -1);
+      return false;
     } else {
       this.stopRightArm();
+      uCanGoDown = true;
+      firstTime = true;
+      return true;
     }
   }
 
-  public void contractRightArm() {
-    if (this.m_rightLowerLimit.get()) {
-      m_rightMotor.set(ControlMode.PercentOutput, 1);
-    } else {
-      this.stopRightArm();
+  public boolean contractRightArm() {
+    if (firstTime) {
+      previousSensor = this.m_rightLowerLimit.get();
+      firstTime = false;
     }
+    if (uCanGoDown) {
+      if (this.m_rightLowerLimit.get() == previousSensor) {
+        m_rightMotor.set(ControlMode.PercentOutput, 1);
+        return false;
+      } else {
+        this.stopRightArm();
+        previousSensor = this.m_rightLowerLimit.get();
+        firstTime = true;
+        uCanGoDown = false;
+        return true;
+      }
+    }
+    return true;
   }
 
   public void stopLeftArm() {

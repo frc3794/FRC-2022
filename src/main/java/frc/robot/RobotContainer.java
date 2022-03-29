@@ -16,8 +16,11 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -40,6 +43,10 @@ public class RobotContainer {
 
   private final Climber m_climber = new Climber();
 
+  private final String[] strArray = {"Level 1 Autonomous", "Level 2 Autonomous"};
+
+  private final Timer timer = new Timer();
+
   public RobotContainer() {
     m_pcmCompressor.enableDigital();
 
@@ -50,13 +57,30 @@ public class RobotContainer {
         .toggleWhenPressed(new ShootCargo(m_shooter, 4500));
 
     new JoystickButton(m_subsystemController, Button.kY.value)
-        .toggleWhenPressed(new ShootCargo(m_shooter, 2500));
+        .toggleWhenPressed(new ShootCargo(m_shooter, 1850));
 
     new JoystickButton(m_subsystemController, Button.kX.value)
         .whileHeld(new TransportCargo(m_indexer));
+
   }
 
   public Command getAutonomousCommand() {
+    boolean buttonValue = SmartDashboard.getBoolean("DB/Button 0", false);
+    boolean buttonValue1 = SmartDashboard.getBoolean("DB/Button 1", false);
+    boolean buttonValue2 = SmartDashboard.getBoolean("DB/Button 2", false);
+
+    if (buttonValue && !buttonValue1 && !buttonValue2) {
+        return level1();
+    } else if (!buttonValue && buttonValue1 && !buttonValue2) {
+        return level2();
+    } else if (!buttonValue && !buttonValue1 && buttonValue2) {
+        return level3();
+    }
+
+    return level1 ();
+  }
+
+public Command level1 () {
     ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
     TransportCargo transportCargo = new TransportCargo(m_indexer);
     Auto auto = new Auto(m_drivetrain);
@@ -66,4 +90,45 @@ public class RobotContainer {
             new WaitCommand(3).andThen(transportCargo))
         .andThen(auto.withTimeout(2));
   }
+
+  public Command level2 () {
+    ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
+    TransportCargo transportCargo = new TransportCargo(m_indexer);
+    Auto auto = new Auto (m_drivetrain);
+    
+    m_intake.open();
+    timer.reset ();
+    timer.start();
+    while(timer.get() < 1);
+    m_drivetrain.moveToDistance(-3.5);
+    m_intake.close();
+    m_drivetrain.moveToDistance(3);
+    timer.stop();
+
+    return shootCommand.withTimeout(2)
+        .deadlineWith(
+            new WaitCommand(1).andThen(transportCargo))
+        .andThen(auto.withTimeout (2));  
+    
+  }
+
+  public Command level3 () {
+    Command x = level2();
+
+    ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
+    TransportCargo transportCargo = new TransportCargo(m_indexer);
+    Auto auto = new Auto (m_drivetrain);
+
+    m_drivetrain.rotateToAngle(-90);
+
+    m_drivetrain.moveToDistance(1);
+
+    m_drivetrain.rotateToAngle(-90);
+
+    return shootCommand.withTimeout(2)
+        .deadlineWith(
+            new WaitCommand(1).andThen(transportCargo))
+        .andThen(auto.withTimeout (2)); 
+  }
+
 }

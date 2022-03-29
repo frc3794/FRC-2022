@@ -12,6 +12,8 @@ import com.revrobotics.SparkMaxPIDController;
 
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Shooter extends SubsystemBase {
 
@@ -22,6 +24,8 @@ public class Shooter extends SubsystemBase {
       ShooterConstants.kShooterMotorPorts[1], MotorType.kBrushless);
 
   private final TalonSRX m_feederMotor = new TalonSRX(ShooterConstants.kFeederMotorPort);
+  
+  private final DigitalOutput R = new DigitalOutput(4);
 
   public Shooter() {
     m_shooterMotor_1.setInverted(ShooterConstants.kShooterMotorsInverted[0]);
@@ -57,4 +61,10 @@ public class Shooter extends SubsystemBase {
     pidController.setFF(ShooterConstants.kFF);
     pidController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
   }
+
+  public void colorLeds (int b) {
+    boolean x = false;
+    if (b >= 1) {x = true;} else {x = false;}
+    R.set(x);
+  } 
 }
