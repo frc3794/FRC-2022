@@ -113,17 +113,22 @@ public Command level1 () {
   }
 
   public Command level3 () {
-    Command x = level2();
+    //Command x = level2();
 
     ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
     TransportCargo transportCargo = new TransportCargo(m_indexer);
     Auto auto = new Auto (m_drivetrain);
 
-    m_drivetrain.rotateToAngle(-90);
+    /*m_drivetrain.rotateToAngle(-90);
 
     m_drivetrain.moveToDistance(1);
 
-    m_drivetrain.rotateToAngle(-90);
+    m_drivetrain.rotateToAngle(-90);*/
+
+    m_drivetrain.setAngle (90);
+    while (!m_drivetrain.rightAngle()) {
+        m_drivetrain.rotateToAngle();
+    }
 
     return shootCommand.withTimeout(2)
         .deadlineWith(

@@ -57,19 +57,13 @@ public class Drivetrain extends SubsystemBase {
   private final PIDController pid = new PIDController(PIDAutoConstants.kP, PIDAutoConstants.kI, PIDAutoConstants.kD);
   private final PIDController lpid = new PIDController(DrivetrainConstants.kP, DrivetrainConstants.kI, DrivetrainConstants.kD);
 
-  AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
   private boolean firstTime = true;
   private float currentAngle = 0.00F;
   private float toAngle = 0.00F;
 
-  /*private final Encoder m_leftEncoder = new Encoder(DrivetrainConstants.kEncoderPorts[0][0],
-      DrivetrainConstants.kEncoderPorts[0][1]);
-  private final Encoder m_rightEncoder = new Encoder(DrivetrainConstants.kEncoderPorts[1][0],
-      DrivetrainConstants.kEncoderPorts[1][1]);
-
-  private final EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
-  private final EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);*/
+  private int addAngle = 0;
 
   private final DifferentialDrive m_drive;
 
@@ -183,26 +177,26 @@ public class Drivetrain extends SubsystemBase {
     }*/
 
     double lSpeed = lpid.calculate(getEncoderDistance(0), setPoint);
-    //double rSpeed = lpid.calculate(getEncoderDistance(1), setPoint);
+    double rSpeed = lpid.calculate(getEncoderDistance(1), setPoint);
 
     m_leftMotors.set(lSpeed);
-    m_rightMotors.set(lSpeed);
+    m_rightMotors.set(rSpeed);
 
   }
 
-  public void rotateToAngle (int addAngle) {
+  public void rotateToAngle () {
     if (firstTime) {
       currentAngle = gyro.getPitch();
       firstTime = false;
     }
     float angle = gyro.getPitch();
 
-    if (currentAngle + addAngle > 180) {
+    toAngle = currentAngle + this.addAngle;
+
+    if (currentAngle + this.addAngle > 180) {
       toAngle = -180 + ((currentAngle + toAngle) - 180);
     } else if (currentAngle + addAngle < -180) {
-      toAngle = 180 - Math.abs((currentAngle + addAngle) + 180);
-    } else {
-      toAngle = currentAngle + addAngle;
+      toAngle = 180 - Math.abs((currentAngle + this.addAngle) + 180);
     }
 
     double speed = pid.calculate(angle, toAngle);
@@ -210,16 +204,20 @@ public class Drivetrain extends SubsystemBase {
     m_leftMotors.set(speed * -1);
   }
 
-  public boolean rightAngle (int addAngle) {
+  public boolean rightAngle () {
     if (!firstTime) {
-      if (gyro.getPitch() == currentAngle + addAngle) {
+      if (gyro.getPitch() == currentAngle + this.addAngle) {
         return true;
       } else {
         return false;
       }
     } else {
-      return true;
+      return false;
     }
+  }
+
+  public void setAngle (int angle) {
+    this.addAngle = angle;
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
