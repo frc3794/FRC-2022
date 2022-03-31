@@ -15,6 +15,7 @@ public class Climb extends CommandBase {
   private final XboxController m_controller = Robot.getSubsystemController();
   private final Climber m_climber;
   private int extend = 0;
+  private boolean goDown = true;
 
   public Climb(Climber climber) {
     this.m_climber = climber;
@@ -26,51 +27,57 @@ public class Climb extends CommandBase {
     m_climber.slideIn();
   }
   
-  @Override
-  public void execute() {
-    if (m_controller.getPOV() != -1) {
-      if (m_controller.getPOV() == 0) {
-        extend = 1;
-      } else if (m_controller.getPOV() == 180) {
-        extend = 0;
-      } else if (m_controller.getPOV() == 90) {
-        extend = 2;
-      }
-      return;
+@Override
+public void execute() {
+  if (m_controller.getPOV() != -1) {
+    if (m_controller.getPOV() == 0) {
+      extend = 1;
+    } else if (m_controller.getPOV() == 180) {
+      extend = 0;
+    } else if (m_controller.getPOV() == 90) {
+      extend = 2;
     }
-/*
-    if (m_controller.getRightY() > 0.2) {
-      m_climber.contractRightArm();
-      return;
-    } else if (m_controller.getRightY() < -0.2) {
-      m_climber.extendRightArmSlow();
-      return;
-    } else {
-      m_climber.stopRightArm();
+    return;
+  }
+  
+  if (m_controller.getRightY() > 0.2) {
+    if (!goDown) {
+      goDown = m_climber.contractRightArm();
     }
+    return;
+  } else if (m_controller.getRightY() < -0.2) {
+    m_climber.extendRightArm();
+    goDown = false;
+    return;
+  } else {
+    m_climber.stopRightArm();
+  }
 
-    if (m_controller.getLeftY() > 0.2) {
-      m_climber.contractLeftArm();
-      return;
-    } else if (m_controller.getLeftY() < -0.2) {
-      m_climber.extendLeftArmSlow();
-      return;
-    } else {
-      m_climber.stopLeftArm();
-    }
-*/
-    if (m_controller.getLeftBumper()) {
-      m_climber.slideIn();
-    }
+  if (m_controller.getLeftY() > 0.2) {
+    m_climber.contractLeftArm();
+    return;
+  } else if (m_controller.getLeftY() < -0.2) {
+    m_climber.extendLeftArm();
+    return;
+  } else {
+    m_climber.stopLeftArm();
+  }
 
-    if (m_controller.getRightBumper()) {
-      m_climber.slideOut();
-    }
+  if (m_controller.getLeftBumper()) {
+    m_climber.slideIn();
+  }
 
-    if (extend == 1) { 
-      m_climber.extendLeftArm();
-      m_climber.extendRightArm();
-      return;
+  if (m_controller.getRightBumper()) {
+    m_climber.slideOut();
+  }
+
+  //Paolos
+
+  if (extend == 1) { 
+    m_climber.extendLeftArm();
+    m_climber.extendRightArm();
+    goDown = false;
+    return;
   } else if (extend == 0) {
     boolean down = false;
     boolean down2 = false;
@@ -81,29 +88,30 @@ public class Climb extends CommandBase {
     extend = 4;
     return;
   } else if (extend == 2) {
-      int x = 0;
-      while (x < 5000) {
-        m_climber.extendLeftArm();
-        m_climber.extendRightArm();
-        x ++;
-      }
-      m_climber.slideOut();
-      boolean up = false;
-      boolean up2 = false;
-      while (!up || !up2) { 
-        up = m_climber.extendLeftArm();
-        up2 = m_climber.extendRightArm();
-      }
-      x = 0;
-      while(x < 20000) {
-        m_climber.extendLeftArmSlow();
-        m_climber.extendRightArmSlow();
-        x ++;
-      }
-      m_climber.stopRightArm();
-      m_climber.stopLeftArm();
-      extend = 4; 
-      return;
+    int x = 0;
+    while (x < 5000) {
+      m_climber.extendLeftArm();
+      m_climber.extendRightArm();
+      x ++;
+    }
+    goDown = false;
+    m_climber.slideOut();
+    boolean up = false;
+    boolean up2 = false;
+    while (!up || !up2) { 
+      up = m_climber.extendLeftArm();
+      up2 = m_climber.extendRightArm();
+    }
+    x = 0;
+    while(x < 20000) {
+      m_climber.extendLeftArmSlow();
+      m_climber.extendRightArmSlow();
+      x ++;
+    }
+    m_climber.stopRightArm();
+    m_climber.stopLeftArm();
+    extend = 4; 
+    return;
   }
 }
 

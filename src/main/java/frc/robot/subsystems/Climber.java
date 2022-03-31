@@ -36,9 +36,6 @@ public class Climber extends SubsystemBase {
 
   private boolean previousSensor = false;
   private boolean firstTime = true;
-  private boolean uCanGoDown = false;
-
-  
 
   public Climber() {
     setDefaultCommand(new Climb(this));
@@ -67,11 +64,11 @@ public class Climber extends SubsystemBase {
   }
 
   public void extendRightArmSlow() {
-    m_rightMotor.set(ControlMode.PercentOutput, -0.2);
+    m_rightMotor.set(ControlMode.PercentOutput, -0.8);
   } 
 
   public void extendLeftArmSlow() {
-    m_leftMotor.set(ControlMode.PercentOutput, 0.2);
+    m_leftMotor.set(ControlMode.PercentOutput, 0.8);
   }  
 
   public boolean extendRightArm() {
@@ -80,7 +77,6 @@ public class Climber extends SubsystemBase {
       return false;
     } else {
       this.stopRightArm();
-      uCanGoDown = true;
       firstTime = true;
       return true;
     }
@@ -91,19 +87,15 @@ public class Climber extends SubsystemBase {
       previousSensor = this.m_rightLowerLimit.get();
       firstTime = false;
     }
-    if (uCanGoDown) {
-      if (this.m_rightLowerLimit.get() == previousSensor) {
-        m_rightMotor.set(ControlMode.PercentOutput, 1);
-        return false;
-      } else {
-        this.stopRightArm();
-        previousSensor = this.m_rightLowerLimit.get();
-        firstTime = true;
-        uCanGoDown = false;
-        return true;
-      }
+
+    if (this.m_rightLowerLimit.get() == previousSensor) {
+      m_rightMotor.set(ControlMode.PercentOutput, 1);
+      return false;
+    } else {
+      this.stopRightArm();
+      firstTime = true;
+      return true;
     }
-    return true;
   }
 
   public void stopLeftArm() {

@@ -73,8 +73,6 @@ public class RobotContainer {
         return level1();
     } else if (!buttonValue && buttonValue1 && !buttonValue2) {
         return level2();
-    } else if (!buttonValue && !buttonValue1 && buttonValue2) {
-        return level3();
     }
 
     return level1 ();
@@ -92,48 +90,64 @@ public Command level1 () {
   }
 
   public Command level2 () {
-    ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
-    TransportCargo transportCargo = new TransportCargo(m_indexer);
     Auto auto = new Auto (m_drivetrain);
     
     m_intake.open();
     timer.reset ();
     timer.start();
-    while(timer.get() < 1);
-    m_drivetrain.moveToDistance(-3.5);
-    m_intake.close();
-    m_drivetrain.moveToDistance(3);
+    m_drivetrain.moveToDistance(-2.3);
+    m_drivetrain.moveToDistance(2.1);
     timer.stop();
 
-    return shootCommand.withTimeout(2)
-        .deadlineWith(
-            new WaitCommand(1).andThen(transportCargo))
-        .andThen(auto.withTimeout (2));  
-    
-  }
+    timer.reset();
+    timer.start();
 
-  public Command level3 () {
-    //Command x = level2();
-
-    ShootCargo shootCommand = new ShootCargo(m_shooter, 4500);
-    TransportCargo transportCargo = new TransportCargo(m_indexer);
-    Auto auto = new Auto (m_drivetrain);
-
-    /*m_drivetrain.rotateToAngle(-90);
-
-    m_drivetrain.moveToDistance(1);
-
-    m_drivetrain.rotateToAngle(-90);*/
-
-    m_drivetrain.setAngle (90);
-    while (!m_drivetrain.rightAngle()) {
-        m_drivetrain.rotateToAngle();
+    while (timer.get() <= 2) {
+        m_shooter.runFeeder();
+        m_shooter.run(4500);
+        if (timer.get() >= 0.8) {
+            m_indexer.rotate();
+            m_intake.close();
+        }
     }
 
-    return shootCommand.withTimeout(2)
-        .deadlineWith(
-            new WaitCommand(1).andThen(transportCargo))
-        .andThen(auto.withTimeout (2)); 
-  }
+    m_shooter.stop();
+    m_shooter.stopFeeder();
+    m_indexer.stop();
 
+    m_drivetrain.moveToDistance(-2.5);
+
+    m_intake.open();
+
+    m_drivetrain.rotateToAngle(90);
+
+    m_drivetrain.moveToDistance(-1);
+
+    m_intake.close();
+
+    m_drivetrain.rotateToAngle(30);
+
+    m_drivetrain.moveToDistance(4);
+
+    timer.stop();
+
+    timer.reset();
+    timer.start();
+
+    while (timer.get() <= 2) {
+        m_shooter.runFeeder();
+        m_shooter.run(1500);
+        if (timer.get() >= 0.5) {
+            m_indexer.rotate();
+        }
+    }
+
+    m_shooter.stop();
+    m_shooter.stopFeeder();
+    m_indexer.stop();
+
+    m_drivetrain.stop();
+
+    return new WaitCommand(1);
+  }
 }
