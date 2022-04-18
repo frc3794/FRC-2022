@@ -13,13 +13,13 @@ import frc.robot.commands.MoveDrivetrain;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 import java.lang.Math;
@@ -58,6 +58,8 @@ public class Drivetrain extends SubsystemBase {
       KitbotWheelSize.kSixInch,
       VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
 
+  private final Timer timer = new Timer();
+
   private int addAngle;
 
     /*private double previousEncoderLeft = getEncoderDistance(0);
@@ -83,7 +85,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Angle", m_gyro.getAngle());
     /*m_odometry.update(m_gyro.getRotation2d(),
         m_leftEncoder.getDistance(),
         m_rightEncoder.getDistance());
@@ -110,22 +111,30 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  public void moveToDistance (double setPoint) {
+  public void moveToDistance (double setPoint, double tm) {
     double previousEncoderLeft = getEncoderDistance(0);
     double previousEncoderRight = getEncoderDistance(1);
     double errorLeft = 100000;
     double errorRight = 100000;
 
+    timer.reset();
+    timer.start();
+
     while (Math.abs(errorLeft) > 0.35 && Math.abs(errorRight) > 0.35) {
       errorLeft = setPoint + getEncoderDistance(0) - previousEncoderLeft;
       errorRight = setPoint - getEncoderDistance(1) + previousEncoderRight;
       tankDriveVolts(errorLeft * PIDAutoConstants.kP, errorRight * PIDAutoConstants.kP);
-
+      if (timer.get() + tm >= 14.5) {
+        break;
+      }
     }
 
   }
 
-  public void rotateToAngle (int angle) {
+  public void rotateToAngle (int angle, double tm) {
+    timer.reset();
+    timer.start();
+
     m_gyro.reset();
     double kp = 0.0085;
     if (angle > 0) {
@@ -134,6 +143,7 @@ public class Drivetrain extends SubsystemBase {
         error = angle - m_gyro.getAngle();
         m_rightMotors.set(error*kp);
         m_leftMotors.set(-error*kp);
+        if (timer.get() + tm >= 14.6) {break;};
       }
     } else if (angle < 0) {
       double error = 1000;
@@ -141,6 +151,26 @@ public class Drivetrain extends SubsystemBase {
         error = angle - m_gyro.getAngle();
         m_rightMotors.set(-error*kp);
         m_leftMotors.set(error*kp);
+        if (timer.get() + tm >= 14.6) {break;};
+      }
+    }
+  }
+
+  public void moveToCurve (double setPointLeft, double setPointRight, double tm) {
+    double previousEncoderLeft = getEncoderDistance(0);
+    double previousEncoderRight = getEncoderDistance(1);
+    double errorLeft = 100000;
+    double errorRight = 100000;
+
+    timer.reset();
+    timer.start();
+
+    while (Math.abs(errorLeft) > 0.1 && Math.abs(errorRight) > 0.1) {
+      errorLeft = setPointLeft + getEncoderDistance(0) - previousEncoderLeft;
+      errorRight = setPointRight - getEncoderDistance(1) + previousEncoderRight;
+      tankDriveVolts(errorLeft * PIDAutoConstants.kP, errorRight * PIDAutoConstants.kP);
+      if (timer.get() + tm >= 14.5) {
+        break;
       }
     }
   }
@@ -156,6 +186,16 @@ public class Drivetrain extends SubsystemBase {
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
+    m_rightMotors.setVoltage(rightVolts);
+    m_drive.feed();
+  }
+
+  public void tankDriveVoltsLeft(double leftVolts) {
+    m_leftMotors.setVoltage(leftVolts);
+    m_drive.feed();
+  }
+
+  public void tankDriveVoltsRight(double rightVolts) {
     m_rightMotors.setVoltage(rightVolts);
     m_drive.feed();
   }

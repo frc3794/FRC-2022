@@ -63,6 +63,7 @@ public final class Constants {
         public static final int kCylinderRight = 3;
 
         public static final int kMotor = 9;
+        //public static final int kMotor = 7;
     }
 
     public static class IndexerConstants {

@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -22,6 +24,7 @@ public class Intake extends SubsystemBase {
       IntakeConstants.kCylinderRight);
 
   private final TalonSRX m_getter = new TalonSRX(IntakeConstants.kMotor);
+  //private final CANSparkMax m_getter = new CANSparkMax(IntakeConstants.kMotor, MotorType.kBrushless);
 
   public Intake() {
     m_getter.setInverted(true);
@@ -30,7 +33,7 @@ public class Intake extends SubsystemBase {
   public void open() {
     m_cylinderLeft.set(true);
     m_cylinderRight.set(true);
-    m_getter.set(ControlMode.PercentOutput, 0.7);
+    m_getter.set(ControlMode.PercentOutput, 1);
   }
 
   public void close() {

@@ -34,9 +34,6 @@ public class Climber extends SubsystemBase {
   private final Solenoid m_rightCylinder = new Solenoid(PneumaticsConstants.kPCMPort, PneumaticsModuleType.CTREPCM,
       ClimberConstants.kRightCylinder);
 
-  private boolean previousSensor = false;
-  private boolean firstTime = true;
-
   public Climber() {
     setDefaultCommand(new Climb(this));
     m_leftMotor.setNeutralMode(NeutralMode.Brake);
@@ -77,23 +74,16 @@ public class Climber extends SubsystemBase {
       return false;
     } else {
       this.stopRightArm();
-      firstTime = true;
       return true;
     }
   }
 
   public boolean contractRightArm() {
-    if (firstTime) {
-      previousSensor = this.m_rightLowerLimit.get();
-      firstTime = false;
-    }
-
-    if (this.m_rightLowerLimit.get() == previousSensor) {
+    if (this.m_rightLowerLimit.get()) {
       m_rightMotor.set(ControlMode.PercentOutput, 1);
       return false;
     } else {
       this.stopRightArm();
-      firstTime = true;
       return true;
     }
   }

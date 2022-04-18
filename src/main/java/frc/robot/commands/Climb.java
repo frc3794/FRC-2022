@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
@@ -14,8 +13,9 @@ public class Climb extends CommandBase {
 
   private final XboxController m_controller = Robot.getSubsystemController();
   private final Climber m_climber;
-  private int extend = 0;
-  private boolean goDown = true;
+  private int extend = 4;
+  private boolean upup1 = false;
+  private boolean upup2 = false;
 
   public Climb(Climber climber) {
     this.m_climber = climber;
@@ -41,25 +41,15 @@ public void execute() {
   }
   
   if (m_controller.getRightY() > 0.2) {
-    if (!goDown) {
-      goDown = m_climber.contractRightArm();
-    }
+    m_climber.contractRightArm();
+    m_climber.contractLeftArm();
     return;
   } else if (m_controller.getRightY() < -0.2) {
     m_climber.extendRightArm();
-    goDown = false;
-    return;
-  } else {
-    m_climber.stopRightArm();
-  }
-
-  if (m_controller.getLeftY() > 0.2) {
-    m_climber.contractLeftArm();
-    return;
-  } else if (m_controller.getLeftY() < -0.2) {
     m_climber.extendLeftArm();
     return;
   } else {
+    m_climber.stopRightArm();
     m_climber.stopLeftArm();
   }
 
@@ -74,9 +64,11 @@ public void execute() {
   //Paolos
 
   if (extend == 1) { 
-    m_climber.extendLeftArm();
-    m_climber.extendRightArm();
-    goDown = false;
+    upup1 = m_climber.extendLeftArm();
+    upup2 = m_climber.extendRightArm();
+    if (upup1 && upup2) {
+      extend = 4;
+    }
     return;
   } else if (extend == 0) {
     boolean down = false;
@@ -94,7 +86,6 @@ public void execute() {
       m_climber.extendRightArm();
       x ++;
     }
-    goDown = false;
     m_climber.slideOut();
     boolean up = false;
     boolean up2 = false;
