@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
   public void open() {
     m_cylinderLeft.set(true);
     m_cylinderRight.set(true);
-    m_getter.set(ControlMode.PercentOutput, 1);
+    m_getter.set(ControlMode.PercentOutput, 0.9);
   }
 
   public void close() {
