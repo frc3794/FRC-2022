@@ -115,7 +115,7 @@ public class RobotContainer {
     
     m_intake.open();
 
-    m_drivetrain.moveToDistance(-2.3, tm.get());
+    m_drivetrain.moveToDistance(-1, tm.get());
     if (tm.get () >= 14.9) {return stopAuto ();}
     m_drivetrain.moveToDistance(2.1, tm.get());
     if (tm.get () >= 14.9) {return stopAuto ();}
