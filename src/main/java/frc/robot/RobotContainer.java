@@ -83,14 +83,32 @@ public class RobotContainer {
   }
 
   public Command level1 () {
-    ShootCargo shootCommand = new ShootCargo(m_shooter, highShoot);
-    TransportCargo transportCargo = new TransportCargo(m_indexer);
-    Auto auto = new Auto(m_drivetrain);
+    timer.reset();
+    timer.start();
 
-    return shootCommand.withTimeout(4)
-        .deadlineWith(
-            new WaitCommand(3).andThen(transportCargo))
-        .andThen(auto.withTimeout(2));
+    while (timer.get() <= 3) {
+        m_shooter.runFeeder();
+        m_shooter.run(highShoot);
+        if (timer.get() >= 0.7) {
+            m_indexer.rotate();
+        }
+        if (tm.get () >= 14.9) {return stopAuto ();}
+    }
+
+    m_shooter.stop();
+    m_shooter.stopFeeder();
+    m_indexer.stop();
+
+    timer.reset();
+    timer.start();
+
+    while (timer.get() <= 9) {
+    }
+
+    m_drivetrain.moveToDistance(-2, tm.get());
+    if (tm.get () >= 14.9) {return stopAuto ();}
+    
+    return new WaitCommand(0.1);
   }
 
   public Command level2 () {
