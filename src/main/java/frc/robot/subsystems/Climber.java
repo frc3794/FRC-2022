@@ -69,6 +69,7 @@ public class Climber extends SubsystemBase {
   }  
 
   public boolean extendRightArm() {
+    SmartDashboard.putBoolean("test", this.m_rightUpperLimit.get());
     if (this.m_rightUpperLimit.get()) {
       m_rightMotor.set(ControlMode.PercentOutput, -1);
       return false;
